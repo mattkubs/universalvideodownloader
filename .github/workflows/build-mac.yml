@@ -34,7 +34,7 @@ jobs:
         run: |
           pyinstaller --windowed \
             --name "Universal Video Downloader" \
-            --icon "ytdler-icon.icns" \
+            --icon "universal-video-downloader-icon.icns" \
             --add-binary "ffmpeg:." \
             universal_video_downloader.py
 
