@@ -4,7 +4,7 @@ name: Build app
 on:
   workflow_dispatch:
   push:
-    branches: [tauri]
+    branches: [main]
 
 jobs:
   build:
