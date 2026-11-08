@@ -1,0 +1,80 @@
+name: Build app
+
+# Press "Run workflow" on the Actions tab to build Windows + macOS together.
+on:
+  workflow_dispatch:
+  push:
+    branches: [tauri]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      # ffmpeg ships inside the app as a "sidecar". yt-dlp is NOT bundled:
+      # the app downloads the newest yt-dlp itself on every launch.
+      - name: Fetch ffmpeg sidecar
+        run: |
+          pip install imageio-ffmpeg
+          TRIPLE=$(rustc -vV | sed -n 's/^host: //p')
+          EXT=""; if [ "$RUNNER_OS" = "Windows" ]; then EXT=".exe"; fi
+          SRC=$(python -c "import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())")
+          DEST="src-tauri/binaries/ffmpeg-$TRIPLE$EXT"
+          cp "$SRC" "$DEST"
+          chmod +x "$DEST"
+          "$DEST" -hide_banner -version | head -1
+
+      - name: Install Tauri CLI
+        run: npm install
+
+      - name: Build
+        run: npx tauri build
+
+      - name: Package (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          mkdir -p out/portable
+          cp src-tauri/target/release/universal-video-downloader.exe "out/portable/Universal Video Downloader.exe"
+          cp src-tauri/target/release/ffmpeg.exe out/portable/
+          cp src-tauri/target/release/bundle/nsis/*.exe out/
+          (cd out/portable && 7z a -tzip ../Universal-Video-Downloader-Windows-portable.zip .)
+          ls -la out
+
+      - name: Package (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p out
+          cd src-tauri/target/release/bundle/macos
+          ditto -c -k --sequesterRsrc --keepParent "Universal Video Downloader.app" \
+            "$GITHUB_WORKSPACE/out/Universal-Video-Downloader-macOS.zip"
+          ls -la "$GITHUB_WORKSPACE/out"
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: Universal-Video-Downloader-${{ runner.os }}
+          path: |
+            out/*.zip
+            out/*.exe

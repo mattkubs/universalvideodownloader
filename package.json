@@ -1,0 +1,11 @@
+{
+  "name": "universal-video-downloader",
+  "private": true,
+  "version": "2.0.0",
+  "scripts": {
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2"
+  }
+}

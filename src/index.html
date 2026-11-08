@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Universal Video Downloader</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main id="scroll">
+    <div class="column">
+
+      <header class="app-header">
+        <svg class="app-icon" viewBox="0 0 256 256" aria-hidden="true">
+          <rect fill="#c4302b" width="256" height="256" rx="60" ry="60"/>
+          <path fill="#fff" d="M95.6,78l82,50-82,50v-100Z"/>
+        </svg>
+        <h1>Universal Video Downloader</h1>
+        <span class="byline">by Kubs</span>
+      </header>
+
+      <section class="group">
+        <div class="section-label">Video link</div>
+        <div class="row">
+          <input id="url" type="text" placeholder="Paste a video link from any site…" spellcheck="false" autocomplete="off" />
+          <button id="btn-fetch" class="btn secondary" disabled>Preparing…</button>
+        </div>
+        <div id="engine-note" class="note hidden"></div>
+      </section>
+
+      <section class="group hidden" id="fmt-group">
+        <div class="section-label">Quality / format</div>
+        <div id="fmt-list" class="fmt-list"></div>
+      </section>
+
+      <section class="group">
+        <div class="section-label">Save to</div>
+        <div class="row">
+          <input id="folder" type="text" readonly />
+          <button id="btn-browse" class="btn secondary">Browse…</button>
+        </div>
+      </section>
+
+      <button class="switch-row" id="auto-switch" role="switch" aria-checked="true">
+        <span class="track"><span class="knob"></span></span>
+        <span class="switch-label">Auto-convert downloads to MP4</span>
+      </button>
+
+      <div class="cookies-row">
+        <label for="cookies">Browser cookies (age-restricted / login videos):</label>
+        <select id="cookies">
+          <option value="none">None</option>
+          <option value="firefox">Firefox</option>
+          <option value="chrome">Chrome</option>
+          <option value="edge">Edge</option>
+          <option value="brave">Brave</option>
+          <option value="opera">Opera</option>
+          <option value="vivaldi">Vivaldi</option>
+          <option value="safari">Safari</option>
+          <option value="file">cookies.txt file…</option>
+        </select>
+        <span id="cookie-file" class="cookie-file hidden"></span>
+      </div>
+
+      <button id="btn-dl" class="btn download" disabled>DOWNLOAD</button>
+
+      <div id="dl-panel" class="panel hidden">
+        <div class="panel-head">
+          <span id="dl-label" class="panel-title">Downloading…</span>
+          <span id="dl-pct" class="mono">0%</span>
+        </div>
+        <div class="bar"><div id="dl-fill" class="fill"></div></div>
+        <div class="panel-foot">
+          <span id="dl-speed"></span>
+          <span id="dl-eta"></span>
+        </div>
+      </div>
+
+      <div id="status" class="status"></div>
+
+      <section class="group">
+        <div class="section-label">Convert to MP4</div>
+        <div class="row">
+          <input id="conv-path" type="text" readonly placeholder="Choose a file to convert…" />
+          <button id="btn-choose" class="btn secondary">Choose file…</button>
+          <button id="btn-conv" class="btn convert" disabled>Convert</button>
+        </div>
+      </section>
+
+      <div id="conv-panel" class="panel hidden">
+        <div class="panel-head">
+          <span class="panel-title">Converting to MP4…</span>
+          <span id="conv-pct" class="mono">0%</span>
+        </div>
+        <div class="bar"><div id="conv-fill" class="fill"></div></div>
+      </div>
+
+      <div id="conv-status" class="status"></div>
+
+      <section class="group hidden" id="hist-group">
+        <div class="hist-head">
+          <div class="section-label">History</div>
+          <button id="btn-clear" class="btn ghost">Clear</button>
+        </div>
+        <div id="hist-list" class="hist-list"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <div id="cancel-bar" class="cancel-bar hidden">
+    <button id="btn-cancel" class="btn cancel">CANCEL</button>
+  </div>
+
+  <footer class="statusbar">
+    <span id="foot-left">starting…</span>
+    <span id="foot-right"></span>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
